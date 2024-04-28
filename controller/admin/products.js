@@ -24,20 +24,20 @@ exports.addProducts = async (req, res) => {
       storage: storage,
     }).fields([{ name: "images", maxCount: undefined }]);
     upload(req, res, async function (err) {
-      const { title, description, price, main_category_id, category_id, sub_category_id } = req.body;
+      const { title, description, price, main_category_id, category_id, sub_category_id,short_description } = req.body;
       let arr = [];
 
       for (let i = 0; i < req.files.images.length; i++) {
-        arr.push(baseurl + req.files.images[i].filename);
+        arr.push(baseurl+"product/" + req.files.images[i].filename);
       }
       const insertQuery =
-        "INSERT INTO products(title,description,images,price,main_category_id,category_id,sub_category_id) VALUES(?,?,?,?,?,?,?)";
+        "INSERT INTO products(title,description,images,price,main_category_id,category_id,sub_category_id,short_description) VALUES(?,?,?,?,?,?,?,?)";
       const inserRow = await dbQueryAsync(insertQuery, [
         title,
         description,
         JSON.stringify(arr),
         price,
-        main_category_id, category_id, sub_category_id
+        main_category_id, category_id, sub_category_id,short_description
       ]);
       if (inserRow) {
         return res.send({

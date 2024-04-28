@@ -21,7 +21,7 @@ router.get("/get-header",headerCtrl.getHeader)
 
 //=============================== Products ===================
 router.post("/get-products",productCtrl.getProducts)
-router.get("/get-product-by-id",productCtrl.getProductById)
+router.get("/get-product-by-id/:id",productCtrl.getProductById)
 
 
 module.exports = router;

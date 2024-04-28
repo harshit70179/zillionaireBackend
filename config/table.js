@@ -22,7 +22,7 @@ exports.table = [
   },
   {
     tableName:"products",
-    query:"CREATE TABLE IF NOT EXISTS products(id INT AUTO_INCREMENT PRIMARY KEY,main_category_id INT NULL,category_id INT NULL,sub_category_id INT NULL,title TEXT NULL, description TEXT NULL,images TEXT NULL,price TEXT NULL)"
+    query:"CREATE TABLE IF NOT EXISTS products(id INT AUTO_INCREMENT PRIMARY KEY,main_category_id INT NULL,category_id INT NULL,sub_category_id INT NULL,title TEXT NULL, description TEXT NULL,images TEXT NULL,price TEXT NULL,short_description TEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
   },
   {
     tableName:"home_title",
