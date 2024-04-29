@@ -16,8 +16,8 @@ exports.userRegister = async (req, res) => {
             let saltRounds = 10;
             const salt = await bcrypt.genSaltSync(saltRounds);
             const hashPassowrd = await bcrypt.hashSync(password, salt);
-            const inserQuery = "INSERT INTO user(first_name,last_name,email,password,user_type) VALUES(?,?,?,?,?)"
-            const insertRow = await dbQueryAsync(inserQuery, [first_name, last_name, lowerEmail, hashPassowrd, userType.USer])
+            const inserQuery = "INSERT INTO user(first_name,last_name,email,password,user_type,wish_list) VALUES(?,?,?,?,?,?)"
+            const insertRow = await dbQueryAsync(inserQuery, [first_name, last_name, lowerEmail, hashPassowrd, userType.USer,JSON.stringify([])])
             if (insertRow) {
                 return res.send({ status: true, message: "Your account has been registered please check your mail" })
             }
@@ -58,6 +58,7 @@ exports.userLogin = async (req, res) => {
                     status: true,
                     authtoken: token,
                     type: checkResult[0].user_type,
+                    wish_list:checkResult[0].wish_list,
                     message: "Your account login successfully",
                 });
             }
@@ -143,3 +144,70 @@ exports.userChangePassword = async (req, res) => {
         res.status(500).send({ staus: false, message: "Internalserver Error" });
     }
 };
+
+exports.getUserDetail=async(req,res)=>{
+    try {
+        const userId = req.loginUserId;
+        const getQuery="SELECT first_name,last_name,email,user_type FROM user WHERE id=?"
+        const getData=await dbQueryAsync(getQuery,[userId])
+        if(getData.length>0){
+            return res.send({status:true,message:"Record found successfully",data:getData})
+        }
+        else{
+            return res.send({status:false,message:"No record found"})
+        }
+    } catch (error) {
+         return res.status(400).send({status:false,message:error})
+    }
+}
+
+exports.getWishList=async(req,res)=>{
+    try {
+        const userId = req.loginUserId;
+        const getQuery="SELECT wish_list FROM user WHERE id=?"
+        const getData=await dbQueryAsync(getQuery,[userId])
+        if(getData.length>0){
+            if(getData[0].wish_list){
+                let productIds=JSON.parse(getData[0].wish_list)
+                const idList = productIds.join(',');
+                const productList=await getProducts(idList)
+                return res.send({status:true,message:"Record found successfully",data:productList})
+            }
+            else{
+                return res.send({status:false,message:"No record found"})
+            }
+        }
+        else{
+            return res.send({status:false,message:"No record found"})
+        }
+        
+    } catch (error) {
+      return res.send({status:false,message:error})  
+    } 
+}
+
+const getProducts=async(idList)=>{
+    return new Promise(async(resolve, reject) => {
+           try {
+             let query=`SELECT products.*,main_category.name AS main_category_name,category.name AS category_name,sub_category.name AS sub_category_name FROM products LEFT JOIN main_category ON main_category.id=products.main_category_id LEFT JOIN category ON category.id=products.category_id LEFT JOIN sub_category ON sub_category.id=products.sub_category_id WHERE products.id IN (${idList});`;
+             let getData=await dbQueryAsync(query)
+             resolve(getData)
+           } catch (error) {
+            reject(error)
+           }
+    })
+}
+
+exports.addWishList=async(req,res)=>{
+    try {
+        const userId = req.loginUserId;
+        const {wish_list}=req.body
+        const updateQuery="UPDATE user SET wish_list=? WHERE id=?"
+        const updateData=await dbQueryAsync(updateQuery,[wish_list,userId])
+        if(updateData){
+            return res.send({status:true,message:"Wishlist added successfully"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})  
+    }
+}

@@ -11,8 +11,8 @@ exports.getHomeProduct=async(req,res)=>{
             for(let i=0;i<getData.length;i++){
                 let productIds=JSON.parse(getData[i].product_ids)
                 if(productIds.length>0){
-                    const idList = productIds.map(id => `'${id}'`).join(',');
-                    const productList=getProducts(idList)
+                    const idList = productIds.join(',');
+                    const productList=await getProducts(idList)
                     arr.push({title:getData[i].title,products:productList})
                 }else{
                     arr.push({title:getData[i].title,products:[]})
@@ -32,8 +32,7 @@ exports.getHomeProduct=async(req,res)=>{
 const getProducts=async(idList)=>{
     return new Promise(async(resolve, reject) => {
            try {
-             let query=`SELECT * FROM products WHERE id IN (${idList});`;
-             console.log(query)
+             let query=`SELECT products.*,main_category.name AS main_category_name,category.name AS category_name,sub_category.name AS sub_category_name FROM products LEFT JOIN main_category ON main_category.id=products.main_category_id LEFT JOIN category ON category.id=products.category_id LEFT JOIN sub_category ON sub_category.id=products.sub_category_id WHERE products.id IN (${idList});`;
              let getData=await dbQueryAsync(query)
              resolve(getData)
            } catch (error) {

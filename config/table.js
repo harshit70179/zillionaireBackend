@@ -1,7 +1,7 @@
 exports.table = [
   {
     tableName: "user",
-    query: "CREATE TABLE IF NOT EXISTS user (id BIGINT AUTO_INCREMENT PRIMARY KEY,user_name VARCHAR(255) NULL,first_name VARCHAR(255) NULL,last_name VARCHAR(255) NULL,email VARCHAR(255) NULL UNIQUE,password VARCHAR(255) NULL,otp INT NULL,otp_time VARCHAR(255) NULL, user_type VARCHAR(255) NOT NULL,is_deleted ENUM('0','1') DEFAULT '0',is_block ENUM('0','1') DEFAULT '0',last_login VARCHAR(255) NULL,ip VARCHAR(255) NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+    query: "CREATE TABLE IF NOT EXISTS user (id BIGINT AUTO_INCREMENT PRIMARY KEY,user_name VARCHAR(255) NULL,first_name VARCHAR(255) NULL,last_name VARCHAR(255) NULL,email VARCHAR(255) NULL UNIQUE,password VARCHAR(255) NULL,otp INT NULL,otp_time VARCHAR(255) NULL, user_type VARCHAR(255) NOT NULL,is_deleted ENUM('0','1') DEFAULT '0',is_block ENUM('0','1') DEFAULT '0',last_login VARCHAR(255) NULL,ip VARCHAR(255) NULL,wish_list TEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
   },
   {
     tableName: "banner",

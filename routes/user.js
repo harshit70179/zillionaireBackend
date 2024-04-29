@@ -11,6 +11,9 @@ const router = express.Router();
 router.post("/user-register",loginCtrl.userRegister);
 router.post("/user-login",loginCtrl.userLogin);
 router.post("/user-change-password",VerifyToken,loginCtrl.userChangePassword);
+router.get("/get-user-detail",VerifyToken,loginCtrl.getUserDetail)
+router.get("/get-wish-list",VerifyToken,loginCtrl.getWishList)
+router.post("/add-wish-list",VerifyToken,loginCtrl.addWishList)
 
 //============================== Banner =================
 router.get("/get-top-banner",bannerCtrl.getTopBanner)
