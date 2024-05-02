@@ -8,6 +8,8 @@ const subCatCtrl= require("../controller/admin/subCategory");
 const productCtrl= require("../controller/admin/products");
 const homeTitleCtrl= require("../controller/admin/homeTitle");
 const dashboardCtrl= require("../controller/admin/dashboard");
+const sitePolicyCtrl= require("../controller/admin/sitePolicy");
+const faqCtrl= require("../controller/admin/faq");
 const VerifyToken=require("../middleware/VerifyToken");
 
 const router = express.Router();
@@ -55,5 +57,16 @@ router.delete("/delete-home-title/:id",VerifyToken,homeTitleCtrl.deleteHomeTitle
 router.put("/update-home-title-staus/:id",VerifyToken,homeTitleCtrl.updateHomeTitleStatus)
 router.put("/update-home-title",VerifyToken,homeTitleCtrl.updateHomeTitle)
 router.post("/add-home-product",VerifyToken,homeTitleCtrl.addHomeProduct)
+
+//========================== Site Policy ===============================
+router.post("/add-update-sitepolicy",VerifyToken,sitePolicyCtrl.updateAddSitePolicy)
+router.get("/get-sitepolicy",VerifyToken,sitePolicyCtrl.getSitePolicy)
+
+//=================== FAQ =================== 
+router.post("/add-faq",VerifyToken,faqCtrl.insertFaq);
+router.get("/get-faq",VerifyToken,faqCtrl.getFaq);
+router.delete("/delete-faq/:id",VerifyToken,faqCtrl.deleteFaq)
+router.put("/update-faq-status/:id",VerifyToken,faqCtrl.updateStatus)
+router.put("/update-faq",VerifyToken,faqCtrl.updateFaq)
 
 module.exports = router;

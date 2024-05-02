@@ -27,5 +27,14 @@ exports.table = [
   {
     tableName:"home_title",
     query:"CREATE TABLE IF NOT EXISTS home_title(id INT AUTO_INCREMENT PRIMARY KEY,title VARCHAR(255) NULL,product_ids TEXT NULL,total_products INT DEFAULT 0,status ENUM('1','0') DEFAULT '0')"
-  }
+  },
+  {
+    tableName: "site_policy",
+    query:
+      "CREATE TABLE IF NOT EXISTS site_policy (id INT AUTO_INCREMENT PRIMARY KEY, shipping LONGTEXT NULL,return_policy LONGTEXT NULL,TAC LONGTEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+  },
+  {
+    tableName:"faq",
+    query:"CREATE TABLE IF NOT EXISTS faq(id INT AUTO_INCREMENT PRIMARY KEY,question TEXT NULL,answer TEXT NULL,status ENUM('1','0') DEFAULT '0')"
+  },
 ];

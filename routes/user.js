@@ -4,6 +4,8 @@ const bannerCtrl= require("../controller/user/banner");
 const headerCtrl= require("../controller/user/header");
 const productCtrl= require("../controller/user/products");
 const homeCtrl= require("../controller/user/homeProduct");
+const sitePolicyCtrl= require("../controller/user/sitePolicy");
+const faqCtrl= require("../controller/user/faq");
 const VerifyToken=require("../middleware/VerifyToken")
 
 const router = express.Router();
@@ -29,6 +31,12 @@ router.get("/get-product-by-id/:id",productCtrl.getProductById)
 
 //========================= Home ==================
 router.get("/get-home-product",homeCtrl.getHomeProduct)
+
+//========================= Home ==================
+router.get("/get-faq",faqCtrl.getFaq)
+
+//========================= Home ==================
+router.get("/get-sitepolicy",sitePolicyCtrl.getSitePolicy)
 
 
 module.exports = router;
