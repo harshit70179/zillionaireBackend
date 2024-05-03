@@ -6,6 +6,7 @@ const productCtrl= require("../controller/user/products");
 const homeCtrl= require("../controller/user/homeProduct");
 const sitePolicyCtrl= require("../controller/user/sitePolicy");
 const faqCtrl= require("../controller/user/faq");
+const orderCtrl= require("../controller/user/order");
 const VerifyToken=require("../middleware/VerifyToken")
 
 const router = express.Router();
@@ -35,8 +36,12 @@ router.get("/get-home-product",homeCtrl.getHomeProduct)
 //========================= Home ==================
 router.get("/get-faq",faqCtrl.getFaq)
 
-//========================= Home ==================
+//========================= SitePolicy ==================
 router.get("/get-sitepolicy",sitePolicyCtrl.getSitePolicy)
+router.get("/footer-collection",sitePolicyCtrl.getFooterCollection)
 
+//============================Order =======================
+router.post("/add-order",VerifyToken,orderCtrl.addOrder)
+router.get("/get-order",VerifyToken,orderCtrl.getOrderHistory)
 
 module.exports = router;

@@ -5,7 +5,7 @@ const dbQueryAsync = util.promisify(db.query).bind(db);
 
 exports.getFaq = async (req, res) => {
   try {
-    const query = "SELECT * FROM faq WHERE status=? ORDER BY id DESC";
+    const query = "SELECT question AS title,answer AS content FROM faq WHERE status=? ORDER BY id DESC";
     const getData = await dbQueryAsync(query,[activeType.active]);
     if (getData.length > 0) {
       return res.send({

@@ -1,5 +1,6 @@
 let db = require("../../config/db");
 const util = require("util");
+const { activeType } = require("../../config/enum");
 const dbQueryAsync = util.promisify(db.query).bind(db);
 
 exports.addSubCategory=async(req,res)=>{
@@ -69,3 +70,30 @@ const incrementCategory=async(id)=>{
     }
     
 }
+
+exports.updateSubCategoryStatus = async (req, res) => {
+    const id = req.params.id
+    const checkquery = "SELECT * FROM sub_category WHERE id=?";
+    const checkData = await dbQueryAsync(checkquery, [id])
+    if (checkData.length > 0) {
+        var status;
+        if (checkData[0].status == activeType.active) {
+            status = activeType.inActive;
+        }
+       else {
+            status = activeType.active;
+        }
+        const updateQuery = "UPDATE sub_category SET status = ?  WHERE id =?";
+        const updateRow = await dbQueryAsync(updateQuery, [status, id])
+        if (updateRow) {
+            return res.send({
+                status: true,
+                message: "Sub category status updated successfully",
+                data: updateRow,
+            });
+        }
+
+    } else {
+        return res.send({ status: false, message: "No records found" });
+    }
+}; 

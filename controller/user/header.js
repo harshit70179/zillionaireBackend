@@ -1,11 +1,12 @@
 let db = require("../../config/db");
 const util = require("util");
+const { activeType } = require("../../config/enum");
 const dbQueryAsync = util.promisify(db.query).bind(db);
 
 exports.getHeader = async (req, res) => {
     try {
-        const getQuery = "SELECT * FROM main_category"
-        const getData = await dbQueryAsync(getQuery)
+        const getQuery = "SELECT * FROM main_category WHERE status=?"
+        const getData = await dbQueryAsync(getQuery,[activeType.active])
         if (getData.length > 0) {
             let arr = []
             for (const mainCategory of getData) {
@@ -40,8 +41,8 @@ exports.getHeader = async (req, res) => {
 const getCategory = async (main_category_id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let query = "SELECT * FROM category WHERE main_category_id=?"
-            let getData = await dbQueryAsync(query, [main_category_id])
+            let query = "SELECT * FROM category WHERE main_category_id=? AND status=?"
+            let getData = await dbQueryAsync(query, [main_category_id,activeType.active])
             resolve(getData)
         } catch (error) {
             reject(error)

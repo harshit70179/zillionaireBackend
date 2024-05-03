@@ -5,6 +5,7 @@ exports.updateAddSitePolicy = async (req, res) => {
     shipping,
     tac,
     return_policy,
+    pp
   } = req.body;
   let getQuery = "SELECT * FROM site_policy";
   db.query(getQuery, (err, result) => {
@@ -13,13 +14,14 @@ exports.updateAddSitePolicy = async (req, res) => {
     } else {
       if (result.length > 0) {
         let updateQuery =
-          "UPDATE site_policy SET shipping=?,return_policy=?,TAC=? WHERE id=?";
+          "UPDATE site_policy SET shipping=?,return_policy=?,TAC=?,pp=? WHERE id=?";
         db.query(
           updateQuery,
           [
             shipping,
             return_policy,
             tac,
+            pp,
             result[0].id,
           ],
           (err, updateResult) => {
@@ -37,13 +39,14 @@ exports.updateAddSitePolicy = async (req, res) => {
         );
       } else {
         let insertQuery =
-          "INSERT INTO site_policy(return_policy,shipping,TAC) VALUES(?,?,?)";
+          "INSERT INTO site_policy(return_policy,shipping,TAC,pp) VALUES(?,?,?,?)";
         db.query(
           insertQuery,
           [
             return_policy,
             shipping,
             tac,
+            pp
           ],
           (err, insertResult) => {
             if (err) {

@@ -19,6 +19,10 @@ exports.getProducts = async (req, res) => {
             query = "SELECT products.*,main_category.name AS main_category_name,category.name AS category_name,sub_category.name AS sub_category_name FROM products LEFT JOIN main_category ON main_category.id=products.main_category_id LEFT JOIN category ON category.id=products.category_id LEFT JOIN sub_category ON sub_category.id=products.sub_category_id WHERE products.main_category_id=? ORDER BY products.id DESC"
             data = [main_category_id]
         }
+        else if (sub_category_id) {
+            query = "SELECT products.*,main_category.name AS main_category_name,category.name AS category_name,sub_category.name AS sub_category_name FROM products LEFT JOIN main_category ON main_category.id=products.main_category_id LEFT JOIN category ON category.id=products.category_id LEFT JOIN sub_category ON sub_category.id=products.sub_category_id WHERE products.sub_category_id=? ORDER BY products.id DESC"
+            data = [sub_category_id]
+        }
         let getData = await dbQueryAsync(query, data)
         if (getData.length > 0) {
             return res.send({ status: true, message: "Record found successfully",data:getData })
