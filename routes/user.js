@@ -7,6 +7,7 @@ const homeCtrl= require("../controller/user/homeProduct");
 const sitePolicyCtrl= require("../controller/user/sitePolicy");
 const faqCtrl= require("../controller/user/faq");
 const orderCtrl= require("../controller/user/order");
+const socialCtrl= require("../controller/user/social");
 const VerifyToken=require("../middleware/VerifyToken")
 
 const router = express.Router();
@@ -43,5 +44,8 @@ router.get("/footer-collection",sitePolicyCtrl.getFooterCollection)
 //============================Order =======================
 router.post("/add-order",VerifyToken,orderCtrl.addOrder)
 router.get("/get-order",VerifyToken,orderCtrl.getOrderHistory)
+
+//=========================== Social ========================
+router.get("/get-social-media",socialCtrl.getSocialMedia)
 
 module.exports = router;
