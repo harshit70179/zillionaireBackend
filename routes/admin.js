@@ -11,6 +11,7 @@ const dashboardCtrl= require("../controller/admin/dashboard");
 const sitePolicyCtrl= require("../controller/admin/sitePolicy");
 const faqCtrl= require("../controller/admin/faq");
 const orderCtrl= require("../controller/admin/order");
+const socialCtrl= require("../controller/admin/socialMedia");
 const VerifyToken=require("../middleware/VerifyToken");
 
 const router = express.Router();
@@ -52,6 +53,7 @@ router.put("/update-sub-category-status/:id",VerifyToken,subCatCtrl.updateSubCat
 router.post("/insert-product",VerifyToken,productCtrl.addProducts)
 router.get("/get-products",VerifyToken,productCtrl.getProducts)
 router.get("/get-product-by-id/:id",VerifyToken,productCtrl.getProductById)
+router.put("/update-products",VerifyToken,productCtrl.updateProducts)
 
 //============================ Home Title =======================
 router.post("/insert-home-title",VerifyToken,homeTitleCtrl.addHomeTitle)
@@ -75,5 +77,12 @@ router.put("/update-faq",VerifyToken,faqCtrl.updateFaq)
 
 //=================== Order ======================
 router.get("/get-order/:status",VerifyToken,orderCtrl.getOrder)
+router.put("/update-order-status",VerifyToken,orderCtrl.updateOderStatus)
+
+//=================== Social Media =================== 
+router.post("/add-socialmedia",VerifyToken,socialCtrl.addSocialMedia);
+router.get("/get-socialmedia",VerifyToken,socialCtrl.getSocialMedia);
+router.delete("/delete-socialmedia/:id",VerifyToken,socialCtrl.deleteSocialMedia)
+router.put("/update-socialmedia",VerifyToken,socialCtrl.updateSocialMedia)
 
 module.exports = router;

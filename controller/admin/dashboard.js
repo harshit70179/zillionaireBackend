@@ -1,5 +1,5 @@
 let db = require("../../config/db");
-const { userType } = require("../../config/enum");
+const { userType, orderType } = require("../../config/enum");
 
 exports.dashboard = async (req, res) => {
     try {
@@ -10,7 +10,11 @@ exports.dashboard = async (req, res) => {
         const banner = await fetchBanner();
         const products = await fetchProducts();
         const home_title = await fetchHomeTitle();
-
+        const order=await fetchOrder()
+        const pendingOrder=await fetchOrderStatus(orderType.Pending)
+        const processingOrder=await fetchOrderStatus(orderType.Processing)
+        const shippingOrder=await fetchOrderStatus(orderType.Shipping)
+        const deliveredOrder=await fetchOrderStatus(orderType.Delivered)
         let arr = [
             {
                 user: user[0].user,
@@ -19,7 +23,12 @@ exports.dashboard = async (req, res) => {
                 sub_category: sub_category[0].sub_category,
                 banner: banner[0].banner,
                 products: products[0].products,
-                home_title: home_title[0].home_title
+                home_title: home_title[0].home_title,
+                order:order[0].orders,
+                pending_order:pendingOrder[0].order_status,
+                processing_order:processingOrder[0].order_status,
+                shipping_order:shippingOrder[0].order_status,
+                delivered_order:deliveredOrder[0].order_status,
             },
         ];
         return res.send({ status: true, data: arr });
@@ -131,4 +140,36 @@ async function fetchHomeTitle() {
         });
     });
 }
+
+async function fetchOrder() {
+    const query =
+        "SELECT Count(id) AS orders FROM order_history";
+    return new Promise((resolve, reject) => {
+        db.query(query, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+async function fetchOrderStatus(status) {
+    const query =
+        "SELECT Count(id) AS order_status FROM order_history WHERE status=?";
+    return new Promise((resolve, reject) => {
+        db.query(query, [status],(err, result) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
+
+
 

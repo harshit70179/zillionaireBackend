@@ -18,3 +18,16 @@ exports.getOrder=async(req,res)=>{
         return res.send({status:false,message:error})
     }
 }
+
+exports.updateOderStatus=async(req,res)=>{
+    try {
+        const {status,id}=req.body
+        const updateQuery="UPDATE order_history SET status=? WHERE id=?"
+        const updateRow=await dbQueryAsync(updateQuery,[status,id])
+        if(updateRow){
+            return res.send({status:true,message:"Order updated successfully"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})
+    }
+}

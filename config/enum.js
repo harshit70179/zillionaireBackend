@@ -14,3 +14,10 @@ exports.showBannerType={
     middle:'2',
     lower:'3'
 }
+
+exports.orderType={
+    Pending:'Pending',
+    Processing:'Processing',
+    Shipping:'Shipping',
+    Delivered:"Delivered"
+}

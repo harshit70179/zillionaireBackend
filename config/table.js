@@ -35,10 +35,14 @@ exports.table = [
   },
   {
     tableName:"faq",
-    query:"CREATE TABLE IF NOT EXISTS faq(id INT AUTO_INCREMENT PRIMARY KEY,question TEXT NULL,answer TEXT NULL,status ENUM('1','0') DEFAULT '0')"
+    query:"CREATE TABLE IF NOT EXISTS faq(id INT AUTO_INCREMENT PRIMARY KEY,question TEXT NULL,answer TEXT NULL,status ENUM('1','0') DEFAULT '0',createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
   },
   {
     tableName:"order_history",
     query:"CREATE TABLE IF NOT EXISTS order_history(id INT AUTO_INCREMENT PRIMARY KEY,order_id VARCHAR(255) UNIQUE,user_id INT NULL,email VARCHAR(255) NULL,first_name VARCHAR(255) NULL, last_name VARCHAR(255) NULL,mobile_number VARCHAR(255) NULL,address VARCHAR(255) NULL,total DECIMAL(8,2) NULL,grand_total DECIMAL(8,2) NULL,discount DECIMAL(8,2) DEFAULT 0,shipping DECIMAL(8,2) DEFAULT 0,product_items TEXT NULL,status VARCHAR(255) NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+  },
+  {
+    tableName:"social_media",
+    query:"CREATE TABLE IF NOT EXISTS social_media(id INT AUTO_INCREMENT PRIMARY KEY,title TEXT NULL,url TEXT NULL,status ENUM('1','0') DEFAULT '1',createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
   }
 ];
