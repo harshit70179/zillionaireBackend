@@ -51,3 +51,18 @@ exports.getProductById = async (req, res) => {
         return res.send({ status: false, message: error })
     }
 }
+
+exports.getAllProducts=async(req,res)=>{
+    try {
+        const getQuery="SELECT products.*,main_category.name AS main_category_name,category.name AS category_name,sub_category.name AS sub_category_name FROM products LEFT JOIN main_category ON main_category.id=products.main_category_id LEFT JOIN category ON category.id=products.category_id LEFT JOIN sub_category ON sub_category.id=products.sub_category_id ORDER BY products.id DESC"
+        const getData=await dbQueryAsync(getQuery)
+        if(getData.length>0){
+            return res.send({status:true,message:"Record found successfully",data:getData})
+        }
+        else{
+            return res.send({status:false,message:"No record found"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})
+    }
+}

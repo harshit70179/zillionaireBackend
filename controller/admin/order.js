@@ -5,7 +5,7 @@ const dbQueryAsync = util.promisify(db.query).bind(db);
 exports.getOrder=async(req,res)=>{
     try {
         const status=req.params.status
-        const getQuery="SELECT * FROM order_history WHERE status=?"
+        const getQuery="SELECT * FROM order_history WHERE status=? ORDER BY id DESC"
         const getData=await dbQueryAsync(getQuery,[status])
         if(getData.length>0){
           return res.send({status:true,message:"Record found successfully",data:getData})

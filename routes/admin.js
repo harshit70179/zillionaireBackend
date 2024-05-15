@@ -12,6 +12,8 @@ const sitePolicyCtrl= require("../controller/admin/sitePolicy");
 const faqCtrl= require("../controller/admin/faq");
 const orderCtrl= require("../controller/admin/order");
 const socialCtrl= require("../controller/admin/socialMedia");
+const exploreCtrl= require("../controller/admin/explore");
+const roleCtrl= require("../controller/admin/roleManagement");
 const VerifyToken=require("../middleware/VerifyToken");
 
 const router = express.Router();
@@ -84,5 +86,18 @@ router.post("/add-socialmedia",VerifyToken,socialCtrl.addSocialMedia);
 router.get("/get-socialmedia",VerifyToken,socialCtrl.getSocialMedia);
 router.delete("/delete-socialmedia/:id",VerifyToken,socialCtrl.deleteSocialMedia)
 router.put("/update-socialmedia",VerifyToken,socialCtrl.updateSocialMedia)
+
+//=========================== Explore ============================
+router.post("/insert-explore",VerifyToken,exploreCtrl.addExplore)
+router.get("/get-explore",VerifyToken,exploreCtrl.getExplore)
+router.delete("/delete-explore/:id",VerifyToken,exploreCtrl.deteleExplore)
+router.put("/update-explore/:id",VerifyToken,exploreCtrl.updateExporeStatus)
+
+//=============================== Role management ================================
+router.get("/get-role",VerifyToken,roleCtrl.getRoleList)
+router.post("/add-role",VerifyToken,roleCtrl.addRole)
+router.delete("/delete-role/:id",VerifyToken,roleCtrl.deleteRole)
+router.get("/get-role-by-id/:id",VerifyToken,roleCtrl.getRoleById)
+router.put("/update-role",VerifyToken,roleCtrl.updateRole)
 
 module.exports = router;

@@ -1,5 +1,7 @@
 let db = require("../../config/db");
 const util = require("util");
+const { main } = require("../common/pdfGenerate");
+const { baseurl } = require("../../config/baseUrl");
 const dbQueryAsync = util.promisify(db.query).bind(db);
 
 function generateOrderId(length) {
@@ -17,10 +19,10 @@ function generateOrderId(length) {
 exports.addOrder = async (req, res) => {
     try {
         const userId = req.loginUserId;
-        const { email, first_name, last_name, mobile_number, address, total, grand_total, discount, shipping, product_items } = req.body
+        const { email, first_name, last_name, mobile_number, address, total, grand_total, discount, shipping, product_items,total_item,gift_status,gift_note } = req.body
         const order_id = "#" + generateOrderId(8)
-        const insertQuery = "INSERT INTO order_history(user_id,order_id,email,first_name,last_name,mobile_number,address,total,grand_total,discount,shipping,product_items,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
-        const insertRow = await dbQueryAsync(insertQuery, [userId, order_id, email, first_name, last_name, mobile_number, address, total, grand_total, discount, shipping, product_items, "Pending"])
+        const insertQuery = "INSERT INTO order_history(user_id,order_id,email,first_name,last_name,mobile_number,address,total,grand_total,discount,shipping,product_items,total_item,gift_status,gift_note,status) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        const insertRow = await dbQueryAsync(insertQuery, [userId, order_id, email, first_name, last_name, mobile_number, address, total, grand_total, discount, shipping, product_items, total_item,gift_status,gift_note,"Pending"])
         if (insertRow) {
             return res.send({ status: true, message: "Order Place successfully" })
         }
@@ -42,5 +44,33 @@ exports.getOrderHistory = async (req, res) => {
         }
     } catch (error) {
         return res.send({ status: false, message: error })
+    }
+}
+
+exports.getPdf=async(req,res)=>{
+    try {
+        const id=req.params.id
+        const query="SELECT * FROM order_history WHERE id=?"
+        const getData=await dbQueryAsync(query,[id])
+        if(getData.length>0){
+            if(getData[0].pdf_link){
+                   return res.send({status:true,data:{pdf:getData[0].pdf_link}})
+            }
+            else{
+
+                const pdf=await main(getData[0])
+                const pdflink=baseurl+pdf
+                const updateQuery="UPDATE order_history SET pdf_link=? WHERE id=?"
+                const updateRow=await dbQueryAsync(updateQuery,[pdflink,id])
+                if(updateRow){
+                 return res.send({status:true,data:{pdf:pdflink}})
+                }
+            }
+        }
+        else{
+            return res.send({status:false,message:"No record found"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})
     }
 }

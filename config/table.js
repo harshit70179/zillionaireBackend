@@ -1,7 +1,7 @@
 exports.table = [
   {
     tableName: "user",
-    query: "CREATE TABLE IF NOT EXISTS user (id BIGINT AUTO_INCREMENT PRIMARY KEY,user_name VARCHAR(255) NULL,first_name VARCHAR(255) NULL,last_name VARCHAR(255) NULL,email VARCHAR(255) NULL UNIQUE,password VARCHAR(255) NULL,otp INT NULL,otp_time VARCHAR(255) NULL, user_type VARCHAR(255) NOT NULL,is_deleted ENUM('0','1') DEFAULT '0',is_block ENUM('0','1') DEFAULT '0',last_login VARCHAR(255) NULL,ip VARCHAR(255) NULL,wish_list TEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
+    query: "CREATE TABLE IF NOT EXISTS user (id BIGINT AUTO_INCREMENT PRIMARY KEY,user_name VARCHAR(255) NULL,first_name VARCHAR(255) NULL,last_name VARCHAR(255) NULL,email VARCHAR(255) NULL UNIQUE,password VARCHAR(255) NULL,user_type VARCHAR(255) NOT NULL,status ENUM('0','1') DEFAULT '0',wish_list TEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
   },
   {
     tableName: "banner",
@@ -19,6 +19,11 @@ exports.table = [
   {
     tableName:"sub_category",
     query:"CREATE TABLE IF NOT EXISTS sub_category(id INT AUTO_INCREMENT PRIMARY KEY,main_category_id INT NULL,category_id INT NULL,name VARCHAR(255) NULL,status ENUM('0','1') NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+  },
+  {
+    tableName: "explore",
+    query:
+      "CREATE TABLE IF NOT EXISTS explore (id INT AUTO_INCREMENT PRIMARY KEY, main_category_id VARCHAR(255) NULL,image VARCHAR(255) NULL,status ENUM('0', '1') DEFAULT '0' COMMENT '0 is inactive , 1 is active',createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)",
   },
   {
     tableName:"products",
@@ -39,7 +44,7 @@ exports.table = [
   },
   {
     tableName:"order_history",
-    query:"CREATE TABLE IF NOT EXISTS order_history(id INT AUTO_INCREMENT PRIMARY KEY,order_id VARCHAR(255) UNIQUE,user_id INT NULL,email VARCHAR(255) NULL,first_name VARCHAR(255) NULL, last_name VARCHAR(255) NULL,mobile_number VARCHAR(255) NULL,address VARCHAR(255) NULL,total DECIMAL(8,2) NULL,grand_total DECIMAL(8,2) NULL,discount DECIMAL(8,2) DEFAULT 0,shipping DECIMAL(8,2) DEFAULT 0,product_items TEXT NULL,status VARCHAR(255) NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
+    query:"CREATE TABLE IF NOT EXISTS order_history(id INT AUTO_INCREMENT PRIMARY KEY,order_id VARCHAR(255) UNIQUE,user_id INT NULL,email VARCHAR(255) NULL,first_name VARCHAR(255) NULL, last_name VARCHAR(255) NULL,mobile_number VARCHAR(255) NULL,address VARCHAR(255) NULL,total DECIMAL(8,2) NULL,grand_total DECIMAL(8,2) NULL,discount DECIMAL(8,2) DEFAULT 0,shipping DECIMAL(8,2) DEFAULT 0,product_items TEXT NULL,status VARCHAR(255) NULL,total_item VARCHAR(255) NULL,gift_status ENUM('0','1') DEFAULT '0',gift_note TEXT NULL,pdf_link TEXT NULL,createdAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,updatedAt timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP)"
   },
   {
     tableName:"social_media",

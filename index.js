@@ -29,8 +29,8 @@ app.use(function (req, res, next) {
 app.use("/api/v1/admin",require("./routes/admin"))
 app.use("/api/v1/user",require("./routes/user"))
 
-
 let port =process.env.port || 8082;
 app.listen(port, () => {
   console.log(`Server up and running on port ${port} !`);
 });
+

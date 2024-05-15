@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Invoice</title>
+		<style>
+			@page {
+				size: letter portrait;
+				@frame header_frame {           /* Static frame */
+					-pdf-frame-content: header_content;
+					left: 20pt;  top: 20pt; right: 20pt ;
+				}
+				@frame content_frame {          /* Content Frame */
+					left: 20pt;  top: 130pt; right: 20pt ;
+		
+				}
+				@frame footer_frame {           /* Static frame */
+					-pdf-frame-content: footer_content;
+					left: 20pt;  top: 772pt; right: 20pt ;
+				}
+			}
+			</style>
+	</head>
+	<body style="padding: 30px;">
+		<header style="display: flex; justify-content: space-between;">
+      <div>
+        <h1>Invoice</h1>
+        <address contenteditable>
+          <p><%= data.first_name %> <%= data.last_name %></p>
+          <p><%= data.address %></p>
+          <p><%= data.mobile_number %></p>
+        </address>
+      </div>
+      <span><img alt="" src="./logo.png"></span>
+		</header>
+		<article>
+			<h1>Recipient</h1>
+			<address contenteditable>
+				<p>Some Company<br>Zillionaire Jewellery</p>
+			</address>
+			<table class="meta" style=" table-layout: fixed; width: 100%;border-collapse: separate; border-spacing: 2px;">
+				<tr>
+					<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left;"><span contenteditable>Order Id </span></th>
+					<td style="border-width: 1px; padding: 0.5em; position: relative; text-align: left;"><span contenteditable><%= data.order_id %></span></td>
+				</tr>
+				<tr>
+					<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left;"><span contenteditable>Order Date</span></th>
+					<td style="border-width: 1px; padding: 0.5em; position: relative; text-align: left;"><span contenteditable><%= data.createdAt %></span></td>
+				</tr>
+			</table>
+			<table style="width: 100%; margin-top: 10px; margin-bottom: 10px; ">
+				<thead>
+					<tr>
+						<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left; border: 1px solid #000;"><span contenteditable>Item</span></th>
+						<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left; border: 1px solid #000;"><span contenteditable>Rate</span></th>
+						<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left; border: 1px solid #000;"><span contenteditable>Quantity</span></th>
+						<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left; border: 1px solid #000;"><span contenteditable>Save</span></th>
+						<th style="border-width: 1px; padding: 0.5em; position: relative; text-align: left; border: 1px solid #000;"><span contenteditable>Price</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<% data.product_items.forEach(item => {
+						 discount=item?.save>0?(item.price)-((item.price*item.save)/100):item.price
+						 %>
+        <tr>
+            <td style="border: 1px solid #000;"><p contenteditable style="margin-bottom:0;"><%= item.title %></p><span><%= item.finishing %></span> / <span><%= item.size %></span></td>
+            <td style="border: 1px solid #000;"><span contenteditable><%= item.price %></span></td>
+            <td style="border: 1px solid #000;"><span contenteditable><%= item.quantity %></span></td>
+            <td style="border: 1px solid #000;"><span contenteditable><%= item.save %></span></td>
+            <td style="border: 1px solid #000;"><span><%=discount * item.quantity %></span></td>
+        </tr>
+        <% }) %>
+				</tbody>
+			</table>
+			<table style="width: 100%;" >
+				<tr>
+					<th><span contenteditable>Sub Total</span></th>
+					<td><span data-prefix>$</span><span><%= data.total %></span></td>
+				</tr>
+				<tr>
+					<th><span contenteditable>Grand Total</span></th>
+					<td><span data-prefix>$</span><span contenteditable><%= data.grand_total %></span></td>
+				</tr>
+			
+			</table>
+		</article>
+	
+	</body>
+</html>

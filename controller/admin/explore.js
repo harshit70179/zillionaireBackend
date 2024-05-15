@@ -4,11 +4,11 @@ const dbQueryAsync = util.promisify(db.query).bind(db);
 const multer = require("multer");
 const path = require("path");
 const { baseurl } = require("../../config/baseUrl");
-const { activeType, showBannerType } = require("../../config/enum");
-exports.addBanner = async (req, res) => {
+const { activeType } = require("../../config/enum");
+exports.addExplore = async (req, res) => {
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "./public/banner/");
+      cb(null, "./public/explore/");
     },
     filename: function (req, file, cb) {
       cb(
@@ -18,26 +18,31 @@ exports.addBanner = async (req, res) => {
     },
   });
 
-  let upload = multer({ storage: storage }).fields([{ name: "banner_image" }]);
+  let upload = multer({ storage: storage }).fields([{ name: "explore_image" }]);
   upload(req, res, async function (err) {
 
-    var bannerimages = req.files.banner_image[0].filename;
-    let bannerLink = baseurl + "banner/" + bannerimages
+    var exploreimages = req.files.explore_image[0].filename;
+    let exploreLink = baseurl + "explore/" + exploreimages
+    const getQuery="SELECT * FROM explore WHERE main_category_id=?"
+    const getData=await dbQueryAsync(getQuery,[req.body.main_category_id])
+    if(getData.length>0){
+       return res.send({status:false,message:"This category already exist"})
+    }
     const query =
-      "insert into banner(title,image,type,show_banner) values(?,?,?,?)";
-    const insertRow = await dbQueryAsync(query, [req.body.title, bannerLink, req.body.type, req.body.show_banner])
+      "insert into explore(main_category_id,image) values(?,?)";
+    const insertRow = await dbQueryAsync(query, [req.body.main_category_id, exploreLink])
     if (insertRow) {
       return res.send({
         status: true,
-        message: "Banner added successfully",
+        message: "Explore added successfully",
         data: insertRow,
       });
     }
   });
 };
 
-exports.getBanner = async (req, res) => {
-  const query = "SELECT * FROM banner ORDER BY id DESC";
+exports.getExplore = async (req, res) => {
+  const query = "SELECT explore.*,main_category.name FROM explore LEFT JOIN main_category ON main_category.id=explore.main_category_id ORDER BY explore.id DESC";
   const getData = await dbQueryAsync(query)
   if (getData.length > 0) {
     return res.send({
@@ -54,28 +59,23 @@ exports.getBanner = async (req, res) => {
   }
 };
 
-exports.deteleBanner = async (req, res) => {
-  const query = "DELETE FROM banner WHERE id=?";
+exports.deteleExplore = async (req, res) => {
+  const query = "DELETE FROM explore WHERE id=?";
   const deleteRow = await dbQueryAsync(query, [req.params.id])
   if (deleteRow) {
     return res.send({
       status: true,
-      message: "Banner deleted successfully",
+      message: "Explore deleted successfully",
       data: deleteRow,
     });
   }
 };
 
-exports.updateBannerStatus = async (req, res) => {
+exports.updateExporeStatus = async (req, res) => {
   const id = req.params.id
-  const showBanner = req.params.show_banner
-  const checkquery = "SELECT * FROM banner WHERE id=?";
+  const checkquery = "SELECT * FROM explore WHERE id=?";
   const checkData = await dbQueryAsync(checkquery, [id])
   if (checkData.length > 0) {
-    if (showBanner != showBannerType.top) {
-      const updateAllquery = "UPDATE banner SET status = ?  WHERE show_banner =?"
-      const updateData = await dbQueryAsync(updateAllquery, [activeType.inActive, showBanner])
-    }
     var status;
     if (checkData[0].status == activeType.active) {
       status = activeType.inActive;
@@ -83,12 +83,12 @@ exports.updateBannerStatus = async (req, res) => {
     if (checkData[0].status == activeType.inActive) {
       status = activeType.active;
     }
-    const updateQuery = "UPDATE banner SET status = ?  WHERE id =?";
+    const updateQuery = "UPDATE explore SET status = ?  WHERE id =?";
     const updateRow = await dbQueryAsync(updateQuery, [status, id])
     if (updateRow) {
       return res.send({
         status: true,
-        message: "Banner status updated successfully",
+        message: "Explore status updated successfully",
         data: updateRow,
       });
     }

@@ -3,8 +3,25 @@ const util = require("util");
 const dbQueryAsync = util.promisify(db.query).bind(db);
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { userType } = require("../../config/enum");
-const configFile=require("../../config/jwt_config")
+const { userType, activeType } = require("../../config/enum");
+const configFile=require("../../config/jwt_config");
+const { sendMail } = require("../common/common");
+
+const generatePassword = () => {
+    const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#%?^-_/$&*]).{8,}$/;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#%?^-_/$&*';
+    let password = '';
+  
+    do {
+      password = '';
+      for (let i = 0; i < 12; i++) { // Generating a 12-character password
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        password += characters.charAt(randomIndex);
+      }
+    } while (!regex.test(password));
+  
+    return password;
+  };
 
 exports.userRegister = async (req, res) => {
     try {
@@ -19,6 +36,12 @@ exports.userRegister = async (req, res) => {
             const inserQuery = "INSERT INTO user(first_name,last_name,email,password,user_type,wish_list) VALUES(?,?,?,?,?,?)"
             const insertRow = await dbQueryAsync(inserQuery, [first_name, last_name, lowerEmail, hashPassowrd, userType.USer,JSON.stringify([])])
             if (insertRow) {
+                const subject="registration Link"
+                const html=`<html><body><h3>Thank you for registration.</h3>
+                <p>Please click this link and your account is activated.</p>
+                <p><a href="${process.env.redirectUrl}registration-seccessfully">${process.env.redirectUrl}registration-seccessfully</a></p>
+                </body></html>`
+                const sendmail=await sendMail(subject,html,lowerEmail,first_name)
                 return res.send({ status: true, message: "Your account has been registered please check your mail" })
             }
         }
@@ -35,10 +58,12 @@ exports.userLogin = async (req, res) => {
     try {
         const { email, password } = req.body
         const lowerEmail = email.toLowerCase()
-        
         const getQuery = "SELECT * FROM user WHERE email=? AND user_type=?";
         const checkResult = await dbQueryAsync(getQuery, [lowerEmail, userType.USer])
         if (checkResult.length > 0) {
+            if(checkResult[0].status===activeType.inActive){
+                   return res.send({status:false,message:"Your email is not activate please check you mail"})
+            }
             const passwordcompare = await bcrypt.compare(
                 password,
                 checkResult[0].password
@@ -109,8 +134,8 @@ exports.userChangePassword = async (req, res) => {
             );
             if (!passwordcompare) {
                 return res.send({
-                    success: false,
-                    error: "Please try to correct old password",
+                    status: false,
+                    message: "Please try to correct old password",
                 });
             } else {
                 const saltRounds = 10;
@@ -122,8 +147,8 @@ exports.userChangePassword = async (req, res) => {
                 );
                 if (oldpasswordcompare) {
                     return res.send({
-                        success: false,
-                        error: "Please enter different password",
+                        status: false,
+                        message: "Please enter different password",
                     });
                 } else {
                     const updateQuery = "UPDATE user SET password=? WHERE id=?";
@@ -209,5 +234,39 @@ exports.addWishList=async(req,res)=>{
         }
     } catch (error) {
         return res.send({status:false,message:error})  
+    }
+}
+
+exports.forgotPassowrd=async(req,res)=>{
+    try {
+        const { email } = req.body
+        const lowerEmail = email.toLowerCase()
+        const query = "SELECT * FROM user WHERE email=?"
+        const getData = await dbQueryAsync(query, [lowerEmail])
+        if(getData.length>0){
+            if(checkResult[0].status===activeType.inActive){
+                return res.send({status:false,message:"Your email is not activate please check you mail"})
+         }
+            const password = generatePassword()
+            let saltRounds = 10;
+            const salt = await bcrypt.genSaltSync(saltRounds);
+            const hashPassowrd = await bcrypt.hashSync(password, salt);
+            const updateQuery="UPDATE user SET password=? WHERE id=?"
+            const updateRow=await dbQueryAsync(updateQuery,[hashPassowrd,getData[0].id])
+            if(updateRow){
+                const subject="Forget passowrd"
+                const html=`<html><body><h3>Your password hasbeen reset.</h3>
+                <p>Please try new password.</p>
+                <p><b>Your new passowrd : ${password}</b></p>
+                </body></html>`
+                const sendmail=await sendMail(subject,html,lowerEmail,getData[0]?.first_name)
+                return res.send({ status: true, message: "Your password has been reset please check your mail" })
+            }
+        }
+        else{
+            return res.send({status:false,message:"This email does not registered"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})
     }
 }
