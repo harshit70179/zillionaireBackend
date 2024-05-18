@@ -6,6 +6,39 @@ const jwt = require("jsonwebtoken");
 const { userType, activeType } = require("../../config/enum");
 const configFile=require("../../config/jwt_config");
 const { sendMail } = require("../common/common");
+const CryptoJS = require("crypto-js");
+const userBaseKey=process.env.encryptKey
+async function decryptApiKey(apiKey) {
+    new Promise((resolve, reject) => {
+        try {
+            const newKey = apiKey
+            .replace(/p1L2u3S/g, "+")
+            .replace(/s1L2a3S4h/g, "/")
+            .replace(/e1Q2u3A4l/g, "=");
+          const newApi = CryptoJS.AES.decrypt(newKey, userBaseKey);
+          resolve(newApi.toString(CryptoJS.enc.Utf8))
+        } catch (error) {
+            reject(error)
+        }
+    })
+
+  }
+
+async function encryptKey(email){
+    new Promise((resolve, reject) => {
+        try {
+            let encryptedApi = CryptoJS.AES.encrypt(email, userBaseKey).toString();
+            encryptedApi = encryptedApi
+              .replace(/\+/g, "p1L2u3S")
+              .replace(/\//g, "s1L2a3S4h")
+              .replace(/=/g, "e1Q2u3A4l");
+              resolve(encryptedApi)
+        } catch (error) {
+            reject(error)
+        }
+    })
+  
+}  
 
 const generatePassword = () => {
     const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#%?^-_/$&*]).{8,}$/;
@@ -39,7 +72,7 @@ exports.userRegister = async (req, res) => {
                 const subject="registration Link"
                 const html=`<html><body><h3>Thank you for registration.</h3>
                 <p>Please click this link and your account is activated.</p>
-                <p><a href="${process.env.redirectUrl}registration-seccessfully">${process.env.redirectUrl}registration-seccessfully</a></p>
+                <p><a href="${process.env.redirectUrl}registration-seccessfully/${encryptKey(lowerEmail)}">${process.env.redirectUrl}registration-seccessfully/${encryptKey(lowerEmail)}</a></p>
                 </body></html>`
                 const sendmail=await sendMail(subject,html,lowerEmail,first_name)
                 return res.send({ status: true, message: "Your account has been registered please check your mail" })
@@ -265,6 +298,31 @@ exports.forgotPassowrd=async(req,res)=>{
         }
         else{
             return res.send({status:false,message:"This email does not registered"})
+        }
+    } catch (error) {
+        return res.send({status:false,message:error})
+    }
+}
+
+exports.userVerified=async(req,res)=>{
+    try {
+        const decryptedData = await decryptApiKey(req.body.id);
+        const getQuery="SELECT * FROM user WHERE email=?"
+        const getData=await dbQueryAsync(getQuery,[decryptedData])
+        if(getData.length>0){
+            if(getData[0].status===activeType.active){
+                return res.send({status:true,message:"Your account is already verify"})
+            }
+            else{
+                const updateQuery="UPDATE user SET status=? WHERE email=?"
+                const updateRow=await dbQueryAsync(updateQuery,[activeType.active,decryptedData])
+                if(updateRow){
+                    return res.send({status:true,message:"Your account is verified please login"})
+                }
+            }
+        }
+        else{
+          return res.send({status:false,message:"No record found"})
         }
     } catch (error) {
         return res.send({status:false,message:error})

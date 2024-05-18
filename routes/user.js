@@ -20,6 +20,7 @@ router.get("/get-user-detail",VerifyToken,loginCtrl.getUserDetail)
 router.get("/get-wish-list",VerifyToken,loginCtrl.getWishList)
 router.post("/add-wish-list",VerifyToken,loginCtrl.addWishList)
 router.post("/forget-password",loginCtrl.forgotPassowrd)
+router.post("/user-verification",loginCtrl.userVerified)
 
 //============================== Banner =================
 router.get("/get-top-banner",bannerCtrl.getTopBanner)
